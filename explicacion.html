@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="es">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calculadora de Desviaciones Estadísticas</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+        
+        .formula-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .concept-card {
+            background: white;
+            border-radius: 16px;
+            padding: 28px;
+            margin: 24px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            border-left: 5px solid #667eea;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .concept-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+        
+        .example-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .example-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+        }
+        
+        .example-table td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .example-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .example-table tr:nth-child(even) {
+            background: #f9fafb;
+        }
+        
+        .icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 24px 0;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .summary-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        
+        .summary-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid #e5e7eb;
+            vertical-align: top;
+        }
+        
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .interpretation-box {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 16px 0;
+            font-weight: 500;
+        }
+        
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .highlight {
+            background: linear-gradient(120deg, #fef3c7 0%, #fde68a 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+ </head>
+ <body class="min-h-full" style="background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);">
+  <div class="max-w-5xl mx-auto px-6 py-12"><!-- Header -->
+   <div class="text-center mb-12">
+    <h1 id="main-title" class="text-5xl font-bold mb-4" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Cálculo de Desviaciones Estadísticas</h1>
+    <p id="subtitle" class="text-xl text-gray-700 max-w-3xl mx-auto">Guía completa para entender y calcular desviaciones y errores en mediciones de laboratorio</p>
+   </div><!-- Introducción -->
+   <div class="concept-card">
+    <div class="icon-badge">
+     🔬
+    </div>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">¿Por qué son importantes estas mediciones?</h2>
+    <p class="text-gray-700 text-lg leading-relaxed">Entender cómo calcular desviaciones y errores es fundamental en el laboratorio porque son la base para evaluar <span class="highlight">la precisión y confiabilidad</span> de tus mediciones. Estas herramientas estadísticas te permiten cuantificar la incertidumbre y comunicar tus resultados de forma científica.</p>
+   </div><!-- Sección 1: Desviación Media -->
+   <div class="concept-card">
+    <div class="icon-badge">
+     📊
+    </div>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">1. Desviación Media</h2>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3">¿Qué es?</h3>
+    <p class="text-gray-700 text-lg mb-6 leading-relaxed">Es el <span class="highlight">promedio de las diferencias absolutas</span> entre cada medición y la media. Mide qué tan dispersas están tus mediciones respecto al valor promedio.</p>
+    <div class="formula-box">
+     <h4 class="text-white font-semibold mb-3 text-lg">Fórmula:</h4>
+     <div class="text-white text-center text-xl">
+      $$\text{Desviación media} = \frac{\sum |x_i - \bar{x}|}{n}$$
+     </div>
+     <div class="text-white mt-4 text-sm">
+      <p><strong>Donde:</strong></p>
+      <ul class="list-disc list-inside mt-2 space-y-1">
+       <li>\(x_i\): cada valor medido</li>
+       <li>\(\bar{x}\): la media aritmética</li>
+       <li>\(n\): número de mediciones</li>
+      </ul>
+     </div>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">Ejemplo (termómetro digital):</h3>
+    <p class="text-gray-700 mb-4">Mediciones: <strong>36,5 – 35,9 – 36,7</strong></p>
+    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+     <p class="text-gray-800 font-mono">$$\bar{x} = \frac{36,5 + 35,9 + 36,7}{3} = 36,37$$</p>
+    </div>
+    <p class="text-gray-700 mb-3 font-semibold">Cálculo de diferencias:</p>
+    <table class="example-table">
+     <thead>
+      <tr>
+       <th>Medición</th>
+       <th>Diferencia (x<sub>i</sub> - x̄)</th>
+       <th>Valor absoluto</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>36,5</td>
+       <td>36,5 - 36,37 = 0,13</td>
+       <td><strong>0,13</strong></td>
+      </tr>
+      <tr>
+       <td>35,9</td>
+       <td>35,9 - 36,37 = -0,47</td>
+       <td><strong>0,47</strong></td>
+      </tr>
+      <tr>
+       <td>36,7</td>
+       <td>36,7 - 36,37 = 0,33</td>
+       <td><strong>0,33</strong></td>
+      </tr>
+     </tbody>
+    </table>
+    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+     <p class="text-gray-800 font-mono">$$\text{Desviación media} = \frac{0,13 + 0,47 + 0,33}{3} = 0,31$$</p>
+    </div>
+    <div class="interpretation-box"><strong>✅ Interpretación:</strong> Tus mediciones se desvían en promedio <strong>±0,31 °C</strong> de la media.
+    </div>
+   </div><!-- Sección 2: Desviación Estándar -->
+   <div class="concept-card">
+    <div class="icon-badge">
+     📉
+    </div>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">2. Desviación Estándar</h2>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3">¿Qué es?</h3>
+    <p class="text-gray-700 text-lg mb-6 leading-relaxed">Mide <span class="highlight">cuánto se dispersan los datos</span> respecto al promedio, pero <strong>da más peso a las diferencias grandes</strong> (porque se eleva al cuadrado). Es la medida más usada en estadística para representar la <strong>precisión</strong> de un instrumento.</p>
+    <div class="formula-box">
+     <h4 class="text-white font-semibold mb-3 text-lg">Fórmula (para muestra):</h4>
+     <div class="text-white text-center text-xl">
+      $$s = \sqrt{\frac{\sum (x_i - \bar{x})^2}{n - 1}}$$
+     </div>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">Ejemplo (termómetro digital):</h3>
+    <p class="text-gray-700 mb-4">Usando las mismas mediciones: <strong>36,5 – 35,9 – 36,7</strong></p>
+    <table class="example-table">
+     <thead>
+      <tr>
+       <th>Medición</th>
+       <th>Diferencia</th>
+       <th>Diferencia al cuadrado</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>36,5</td>
+       <td>0,13</td>
+       <td>(0,13)² = <strong>0,0169</strong></td>
+      </tr>
+      <tr>
+       <td>35,9</td>
+       <td>-0,47</td>
+       <td>(-0,47)² = <strong>0,2209</strong></td>
+      </tr>
+      <tr>
+       <td>36,7</td>
+       <td>0,33</td>
+       <td>(0,33)² = <strong>0,1089</strong></td>
+      </tr>
+     </tbody>
+    </table>
+    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+     <p class="text-gray-800 font-mono">$$s = \sqrt{\frac{0,0169 + 0,2209 + 0,1089}{3-1}} = \sqrt{\frac{0,3467}{2}} = \sqrt{0,17335} = 0,42$$</p>
+    </div>
+    <div class="interpretation-box"><strong>✅ Interpretación:</strong> En promedio, las mediciones varían <strong>±0,42 °C</strong> respecto al valor medio.
+    </div>
+   </div><!-- Sección 3: Error Absoluto -->
+   <div class="concept-card">
+    <div class="icon-badge">
+     🎯
+    </div>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">3. Error Absoluto</h2>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3">¿Qué es?</h3>
+    <p class="text-gray-700 text-lg mb-6 leading-relaxed">Es una estimación de <span class="highlight">cuánto puede desviarse la media obtenida del valor verdadero</span>. Sirve para <strong>expresar la incertidumbre de tu resultado final</strong>.</p>
+    <div class="formula-box">
+     <h4 class="text-white font-semibold mb-3 text-lg">Fórmula:</h4>
+     <div class="text-white text-center text-xl">
+      $$E = \frac{s}{\sqrt{n}}$$
+     </div>
+     <div class="text-white mt-4 text-sm">
+      <p><strong>Donde:</strong></p>
+      <ul class="list-disc list-inside mt-2 space-y-1">
+       <li>\(s\): desviación estándar</li>
+       <li>\(n\): número de mediciones</li>
+      </ul>
+     </div>
+    </div>
+    <h3 class="text-xl font-semibold text-gray-700 mb-3 mt-6">Ejemplo:</h3>
+    <div class="bg-gray-50 p-4 rounded-lg mb-4">
+     <p class="text-gray-800 font-mono">$$E = \frac{0,42}{\sqrt{3}} = \frac{0,42}{1,732} = 0,24$$</p>
+    </div>
+    <div class="interpretation-box"><strong>✅ Interpretación:</strong> El valor medio (36,37 °C) tiene una <strong>incertidumbre de ±0,24 °C</strong>.
+    </div>
+   </div><!-- Tabla Resumen -->
+   <div class="concept-card">
+    <div class="icon-badge">
+     📋
+    </div>
+    <h2 class="text-3xl font-bold text-gray-800 mb-6">Resumen Comparativo</h2>
+    <table class="summary-table">
+     <thead>
+      <tr>
+       <th>Concepto</th>
+       <th>Qué mide</th>
+       <th>Fórmula</th>
+       <th>Interpretación</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td><strong>Desviación media</strong></td>
+       <td>Dispersión promedio (sin importar dirección)</td>
+       <td>$$\frac{\sum |x_i - \bar{x}|}{n}$$</td>
+       <td>Qué tanto varían las mediciones respecto al promedio</td>
+      </tr>
+      <tr>
+       <td><strong>Desviación estándar</strong></td>
+       <td>Precisión estadística</td>
+       <td>$$\sqrt{\frac{\sum (x_i - \bar{x})^2}{n-1}}$$</td>
+       <td>Cuánto se alejan los datos de la media</td>
+      </tr>
+      <tr>
+       <td><strong>Error absoluto</strong></td>
+       <td>Incertidumbre de la media</td>
+       <td>$$\frac{s}{\sqrt{n}}$$</td>
+       <td>Qué tan confiable es el valor medio obtenido</td>
+      </tr>
+     </tbody>
+    </table>
+   </div><!-- Footer -->
+   <div class="text-center mt-12 text-gray-600">
+    <p class="text-sm">💡 Usa estas fórmulas en tus informes de laboratorio para presentar resultados con rigor científico</p>
+   </div>
+  </div>
+  <script>
+        const defaultConfig = {
+            main_title: "Cálculo de Desviaciones Estadísticas",
+            subtitle: "Guía completa para entender y calcular desviaciones y errores en mediciones de laboratorio",
+            example_title: "Ejemplo (termómetro digital)",
+            primary_color: "#667eea",
+            secondary_color: "#764ba2",
+            background_color: "#f5f7fa",
+            text_color: "#374151",
+            accent_color: "#10b981"
+        };
+
+        async function onConfigChange(config) {
+            const mainTitle = config.main_title || defaultConfig.main_title;
+            const subtitle = config.subtitle || defaultConfig.subtitle;
+            const primaryColor = config.primary_color || defaultConfig.primary_color;
+            const secondaryColor = config.secondary_color || defaultConfig.secondary_color;
+            const backgroundColor = config.background_color || defaultConfig.background_color;
+            const textColor = config.text_color || defaultConfig.text_color;
+            const accentColor = config.accent_color || defaultConfig.accent_color;
+
+            document.getElementById('main-title').textContent = mainTitle;
+            document.getElementById('subtitle').textContent = subtitle;
+
+            document.body.style.background = `linear-gradient(135deg, ${backgroundColor} 0%, #c3cfe2 100%)`;
+
+            const formulaBoxes = document.querySelectorAll('.formula-box');
+            formulaBoxes.forEach(box => {
+                box.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+            });
+
+            const iconBadges = document.querySelectorAll('.icon-badge');
+            iconBadges.forEach(badge => {
+                badge.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+            });
+
+            const stepNumbers = document.querySelectorAll('.step-number');
+            stepNumbers.forEach(step => {
+                step.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+            });
+
+            const tableHeaders = document.querySelectorAll('.example-table th, .summary-table th');
+            tableHeaders.forEach(header => {
+                header.style.background = `linear-gradient(135deg, ${primaryColor} 0%, ${secondaryColor} 100%)`;
+            });
+
+            const interpretationBoxes = document.querySelectorAll('.interpretation-box');
+            interpretationBoxes.forEach(box => {
+                box.style.background = `linear-gradient(135deg, ${accentColor} 0%, #059669 100%)`;
+            });
+
+            const conceptCards = document.querySelectorAll('.concept-card');
+            conceptCards.forEach(card => {
+                card.style.borderLeftColor = primaryColor;
+            });
+
+            const allText = document.querySelectorAll('h2, h3, p, td, th, li');
+            allText.forEach(element => {
+                if (!element.closest('.formula-box') && !element.closest('.interpretation-box') && !element.closest('th')) {
+                    element.style.color = textColor;
+                }
+            });
+        }
+
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities: (config) => ({
+                    recolorables: [
+                        {
+                            get: () => config.primary_color || defaultConfig.primary_color,
+                            set: (value) => {
+                                config.primary_color = value;
+                                window.elementSdk.setConfig({ primary_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.secondary_color || defaultConfig.secondary_color,
+                            set: (value) => {
+                                config.secondary_color = value;
+                                window.elementSdk.setConfig({ secondary_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.background_color || defaultConfig.background_color,
+                            set: (value) => {
+                                config.background_color = value;
+                                window.elementSdk.setConfig({ background_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.text_color || defaultConfig.text_color,
+                            set: (value) => {
+                                config.text_color = value;
+                                window.elementSdk.setConfig({ text_color: value });
+                            }
+                        },
+                        {
+                            get: () => config.accent_color || defaultConfig.accent_color,
+                            set: (value) => {
+                                config.accent_color = value;
+                                window.elementSdk.setConfig({ accent_color: value });
+                            }
+                        }
+                    ],
+                    borderables: [],
+                    fontEditable: undefined,
+                    fontSizeable: undefined
+                }),
+                mapToEditPanelValues: (config) => new Map([
+                    ["main_title", config.main_title || defaultConfig.main_title],
+                    ["subtitle", config.subtitle || defaultConfig.subtitle],
+                    ["example_title", config.example_title || defaultConfig.example_title]
+                ])
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99c901567311473f',t:'MTc2MjgxMzk0MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
